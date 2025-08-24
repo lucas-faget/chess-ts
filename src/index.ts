@@ -1,3 +1,8 @@
-import { fen } from "./fen.js";
+import { Chess } from "./Chess";
 
-console.log(fen);
+const chess: Chess = new Chess();
+console.log(chess.chessboard.toString());
+console.log(chess.toFen());
+chess.tryMove("e2", "e4");
+console.log(chess.chessboard.toString());
+console.log(chess.toFen());

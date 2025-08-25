@@ -2,15 +2,15 @@
     "compilerOptions": {
         "target": "ES2022",
         "module": "ESNext",
+        "moduleResolution": "Node",
         "outDir": "dist",
         "rootDir": "src",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
         "strict": true,
-        "esModuleInterop": true,
-        "moduleResolution": "Node",
-        "isolatedModules": true
+        "isolatedModules": true,
+        "esModuleInterop": true
     },
     "include": ["src"]
 }

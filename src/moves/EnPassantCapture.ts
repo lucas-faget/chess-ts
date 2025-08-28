@@ -2,6 +2,7 @@ import { MoveType } from "../types/MoveType";
 import { Piece } from "../pieces/Piece";
 import { Square } from "../board/Square";
 import { Capture } from "./Capture";
+import { MoveDTO } from "../dto/MoveDTO";
 
 export class EnPassantCapture extends Capture {
     captureSquare: Square;
@@ -24,5 +25,12 @@ export class EnPassantCapture extends Capture {
         this.fromSquare.piece = this.toSquare.piece;
         this.toSquare.piece = null;
         this.captureSquare.piece = this.capturedPiece;
+    }
+
+    override serialize(): MoveDTO {
+        return {
+            ...super.serialize(),
+            captureSquare: this.captureSquare.name,
+        };
     }
 }

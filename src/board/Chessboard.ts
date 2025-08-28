@@ -116,7 +116,6 @@ export class Chessboard {
     }
 
     undoMove(move: MoveDTO): void {
-        console.log(move);
         const fromSquare: Square | null = this.getSquareByName(move.fromSquare);
         const toSquare: Square | null = this.getSquareByName(move.toSquare);
         const captureSquare: Square | null = move.captureSquare ? this.getSquareByName(move.captureSquare) : null;
@@ -130,11 +129,7 @@ export class Chessboard {
             toSquare.piece = null;
 
             if (captureSquare && move.capturedPiece) {
-                console.log(move.capturedPiece.color);
-                console.log(move.capturedPiece.name);
-                console.log(captureSquare.toString());
                 captureSquare.setPiece(move.capturedPiece.name as PieceName, move.capturedPiece.color as PlayerColor);
-                console.log(captureSquare.toString());
             }
         }
     }

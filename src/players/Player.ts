@@ -9,7 +9,6 @@ import { Piece } from "../pieces/Piece";
 import { Pawn } from "../pieces/Pawn";
 import { King } from "../pieces/King";
 import { Square } from "../board/Square";
-import { Move } from "../moves/Move";
 
 export class Player {
     name: string;

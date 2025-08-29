@@ -12,8 +12,8 @@ import { MoveDTO } from "./dto/MoveDTO";
 import { LegalMovesDTO } from "./dto/LegalMovesDTO";
 
 export class Chess {
-    chessboard: Chessboard;
     players: Player[];
+    chessboard: Chessboard;
     activePlayerIndex: number = 0;
     halfmoveClock: number = 0;
     fullmoveNumber: number = 1;
@@ -30,6 +30,8 @@ export class Chess {
 
         this.chessboard = new Chessboard(fen.position);
         this.setKingSquares();
+
+        this.activePlayerIndex = this.players.findIndex((p) => (p.color as string) === fen.activePlayer) ?? 0;
 
         this.halfmoveClock = fen.halfmoveClock;
         this.fullmoveNumber = fen.fullmoveNumber;
@@ -117,7 +119,7 @@ export class Chess {
         });
     }
 
-    performMove(move: Move): void {
+    playMove(move: Move): void {
         this.getActivePlayer().isChecked = false;
         move.carryOutMove();
         this.setNextPlayer();
@@ -135,7 +137,7 @@ export class Chess {
             return null;
         }
 
-        this.performMove(move);
+        this.playMove(move);
         return this.history[this.history.length - 1].move;
     }
 
@@ -145,24 +147,27 @@ export class Chess {
         }
 
         const historyEntry: HistoryEntry | undefined = this.history.pop();
-        if (historyEntry && historyEntry.move) {
-            this.getActivePlayer().isChecked = false;
-            this.chessboard.undoMove(historyEntry.move);
-            if (this.activePlayerIndex === 0) this.fullmoveNumber--;
-            //this.halfmoveClock--;
-            this.setPreviousPlayer();
-            if (this.chessboard.getSquareByName(historyEntry.move.fromSquare)?.piece?.getName() === PieceName.King)
-                this.getActivePlayer().kingSquare = this.chessboard.getSquareByName(historyEntry.move.fromSquare);
-            this.getActivePlayer().castlingRights = Fen.stringToCastlingRights(
-                Fen.fromFenString(historyEntry.fenString).castlingRights,
-                this.getActivePlayer().color
-            );
-            this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
-            this.setLegalMoves();
-            return historyEntry.move;
+        if (!historyEntry || !historyEntry.move) {
+            return null;
         }
 
-        return null;
+        const { fenString, move } = historyEntry;
+
+        this.getActivePlayer().isChecked = false;
+        this.chessboard.undoMove(move);
+        if (this.activePlayerIndex === 0) this.fullmoveNumber--;
+        //this.halfmoveClock--;
+        this.setPreviousPlayer();
+        if (this.chessboard.getSquareByName(move.fromSquare)?.piece?.getName() === PieceName.King)
+            this.getActivePlayer().kingSquare = this.chessboard.getSquareByName(move.fromSquare);
+        this.getActivePlayer().castlingRights = Fen.stringToCastlingRights(
+            Fen.fromFenString(fenString).castlingRights,
+            this.getActivePlayer().color
+        );
+        this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
+        this.setLegalMoves();
+
+        return move;
     }
 
     serializeLegalMoves(): LegalMovesDTO {

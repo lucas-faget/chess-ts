@@ -19,8 +19,8 @@ export class Fen {
     ) {
         this.position = position;
         this.activePlayer = color as string;
-        this.castlingRights = castlingRights ?? "-";
-        this.enPassantTarget = enPassantTarget ?? "-";
+        this.castlingRights = castlingRights || "-";
+        this.enPassantTarget = enPassantTarget || "-";
         this.halfmoveClock = halfmoveClock;
         this.fullmoveNumber = fullmoveNumber;
     }

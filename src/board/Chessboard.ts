@@ -10,8 +10,8 @@ import { Bishop } from "../pieces/Bishop";
 import { Rook } from "../pieces/Rook";
 import { Queen } from "../pieces/Queen";
 import { King } from "../pieces/King";
-import { Player } from "../players/Player";
 import { Square } from "./Square";
+import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { MoveDTO } from "../dto/MoveDTO";
 
@@ -97,6 +97,16 @@ export class Chessboard {
                 x++;
             }
         });
+    }
+
+    findKingSquare(color: PlayerColor): Square | null {
+        for (const square of this.squares.values()) {
+            if (square.isOccupiedByPieceName(PieceName.King) && square.isOccupiedByAlly(color)) {
+                return square;
+            }
+        }
+
+        return null;
     }
 
     move(move: MoveDTO): void {

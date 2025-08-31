@@ -1,14 +1,14 @@
 import { Direction } from "../coordinates/Direction";
 import { Directions } from "../coordinates/Directions";
-import { Capture } from "../moves/Capture";
-import { Castling } from "../moves/Castling";
-import { Move } from "../moves/Move";
-import { Player } from "../players/Player";
-import { CastlingSide } from "../types/CastlingSide";
 import { PieceName } from "../types/PieceName";
+import { CastlingSide } from "../types/CastlingSide";
 import { Piece } from "./Piece";
 import { Queen } from "./Queen";
+import { Move } from "../moves/Move";
+import { Capture } from "../moves/Capture";
+import { Castling } from "../moves/Castling";
 import { Square } from "../board/Square";
+import { Player } from "../players/Player";
 import { Chessboard } from "../board/Chessboard";
 
 export class King extends Piece {
@@ -57,9 +57,7 @@ export class King extends Piece {
 
             for (const side of sides) {
                 const castlingDirection: Direction | null =
-                    side === CastlingSide.Kingside
-                        ? player.kingsideCastlingDirection
-                        : player.queensideCastlingDirection;
+                    side === CastlingSide.Kingside ? player.kingsideDirection : player.queensideDirection;
                 const castlingOffset: number =
                     side === CastlingSide.Kingside ? King.KingsideCastlingOffset : King.QueensideCastlingOffset;
 

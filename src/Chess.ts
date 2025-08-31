@@ -24,8 +24,18 @@ export class Chess {
         const fen: Fen = Fen.fromFenString(fenString);
 
         this.players = [
-            new Player(PlayerColor.White, "Whites", Directions.Up),
-            new Player(PlayerColor.Black, "Blacks", Directions.Down),
+            new Player(
+                PlayerColor.White,
+                "Whites",
+                Directions.Up,
+                Fen.stringToCastlingRights(fen.castlingRights, PlayerColor.White)
+            ),
+            new Player(
+                PlayerColor.Black,
+                "Blacks",
+                Directions.Down,
+                Fen.stringToCastlingRights(fen.castlingRights, PlayerColor.Black)
+            ),
         ];
 
         this.chessboard = new Chessboard(fen.position);
@@ -101,13 +111,12 @@ export class Chess {
         }
     }
 
-    storeHistoryEntry(move: MoveDTO, enPassantTarget: string | null) {
+    storeHistoryEntry(move: MoveDTO, enPassantTarget: string | null): void {
         const color: PlayerColor = this.getActivePlayer().color;
         const fen: Fen = new Fen(
             this.chessboard.toFen(),
             color,
-            Fen.castlingRightsToString(this.players[0].castlingRights, this.players[0].color) +
-                Fen.castlingRightsToString(this.players[1].castlingRights, this.players[1].color),
+            this.players.map((p) => Fen.castlingRightsToString(p.castlingRights, p.color)).join(""),
             enPassantTarget,
             this.halfmoveClock,
             this.fullmoveNumber
@@ -122,8 +131,9 @@ export class Chess {
     playMove(move: Move): void {
         this.getActivePlayer().isChecked = false;
         move.carryOutMove();
+        this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
+        this.getActivePlayer().updateCastlingRights(move, this.chessboard);
         this.setNextPlayer();
-        if (move.toSquare.piece?.getName() === PieceName.King) this.getActivePlayer().kingSquare = move.toSquare;
         if (this.activePlayerIndex === 0) this.fullmoveNumber++;
         //this.halfmoveClock++;
         this.storeHistoryEntry(move.serialize(), move.enPassantTarget);
@@ -146,20 +156,15 @@ export class Chess {
             return null;
         }
 
-        const historyEntry: HistoryEntry | undefined = this.history.pop();
-        if (!historyEntry || !historyEntry.move) {
-            return null;
-        }
-
-        const { fenString, move } = historyEntry;
+        const move: MoveDTO | null = this.history.pop()?.move ?? null;
+        const fenString: string = this.history[this.history.length - 1].fenString;
 
         this.getActivePlayer().isChecked = false;
-        this.chessboard.undoMove(move);
+        if (move) this.chessboard.undoMove(move);
         if (this.activePlayerIndex === 0) this.fullmoveNumber--;
         //this.halfmoveClock--;
         this.setPreviousPlayer();
-        if (this.chessboard.getSquareByName(move.fromSquare)?.piece?.getName() === PieceName.King)
-            this.getActivePlayer().kingSquare = this.chessboard.getSquareByName(move.fromSquare);
+        this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
         this.getActivePlayer().castlingRights = Fen.stringToCastlingRights(
             Fen.fromFenString(fenString).castlingRights,
             this.getActivePlayer().color

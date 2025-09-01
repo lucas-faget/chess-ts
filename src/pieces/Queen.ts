@@ -1,6 +1,6 @@
 import { Direction } from "../coordinates/Direction";
-import { PieceName } from "../types/PieceName";
 import { PlayerColor } from "../types/PlayerColor";
+import { PieceName } from "../types/PieceName";
 import { SlidingPiece } from "./SlidingPiece";
 import { Bishop } from "./Bishop";
 import { Rook } from "./Rook";

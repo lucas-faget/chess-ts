@@ -1,7 +1,7 @@
 import { Direction } from "../coordinates/Direction";
 import { Directions } from "../coordinates/Directions";
-import { PieceName } from "../types/PieceName";
 import { PlayerColor } from "../types/PlayerColor";
+import { PieceName } from "../types/PieceName";
 import { SlidingPiece } from "./SlidingPiece";
 
 export class Bishop extends SlidingPiece {

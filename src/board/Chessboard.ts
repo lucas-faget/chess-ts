@@ -1,5 +1,5 @@
-import { Direction } from "../coordinates/Direction";
 import { Position } from "../coordinates/Position";
+import { Direction } from "../coordinates/Direction";
 import { PieceName } from "../types/PieceName";
 import { PlayerColor } from "../types/PlayerColor";
 import { LegalMoves } from "../types/LegalMoves";

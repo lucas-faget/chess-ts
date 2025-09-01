@@ -1,6 +1,6 @@
 import { Position } from "../coordinates/Position";
-import { PieceName } from "../types/PieceName";
 import { PlayerColor } from "../types/PlayerColor";
+import { PieceName } from "../types/PieceName";
 import { Piece } from "../pieces/Piece";
 import { Pawn } from "../pieces/Pawn";
 import { Knight } from "../pieces/Knight";

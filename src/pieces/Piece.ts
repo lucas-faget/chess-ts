@@ -1,7 +1,7 @@
-import { PieceName } from "../types/PieceName";
 import { PlayerColor } from "../types/PlayerColor";
-import { Player } from "../players/Player";
+import { PieceName } from "../types/PieceName";
 import { Square } from "../board/Square";
+import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { Chessboard } from "../board/Chessboard";
 import { PieceDTO } from "../dto/PieceDTO";

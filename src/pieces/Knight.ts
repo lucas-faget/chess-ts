@@ -1,11 +1,11 @@
 import { Direction } from "../coordinates/Direction";
 import { Directions } from "../coordinates/Directions";
-import { Capture } from "../moves/Capture";
-import { Move } from "../moves/Move";
-import { Player } from "../players/Player";
 import { PieceName } from "../types/PieceName";
 import { Piece } from "./Piece";
 import { Square } from "../board/Square";
+import { Player } from "../players/Player";
+import { Move } from "../moves/Move";
+import { Capture } from "../moves/Capture";
 import { Chessboard } from "../board/Chessboard";
 
 export class Knight extends Piece {

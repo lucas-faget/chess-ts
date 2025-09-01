@@ -1,15 +1,15 @@
+import { Position } from "../coordinates/Position";
 import { Direction } from "../coordinates/Direction";
 import { Directions } from "../coordinates/Directions";
-import { Position } from "../coordinates/Position";
+import { PlayerColor } from "../types/PlayerColor";
+import { PieceName } from "../types/PieceName";
+import { Piece } from "./Piece";
+import { Square } from "../board/Square";
+import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { Capture } from "../moves/Capture";
 import { EnPassantCapture } from "../moves/EnPassantCapture";
 import { Promotion } from "../moves/Promotion";
-import { Player } from "../players/Player";
-import { PieceName } from "../types/PieceName";
-import { PlayerColor } from "../types/PlayerColor";
-import { Piece } from "./Piece";
-import { Square } from "../board/Square";
 import { Chessboard } from "../board/Chessboard";
 
 export class Pawn extends Piece {

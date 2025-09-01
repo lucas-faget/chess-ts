@@ -1,8 +1,8 @@
 import { Direction } from "../coordinates/Direction";
 import { PieceName } from "../types/PieceName";
 import { Piece } from "./Piece";
-import { Player } from "../players/Player";
 import { Square } from "../board/Square";
+import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { Capture } from "../moves/Capture";
 import { Chessboard } from "../board/Chessboard";

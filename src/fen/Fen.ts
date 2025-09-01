@@ -1,5 +1,5 @@
-import { CastlingRights } from "../types/CastlingRights";
 import { PlayerColor } from "../types/PlayerColor";
+import { CastlingRights } from "../types/CastlingRights";
 
 export class Fen {
     position: string;

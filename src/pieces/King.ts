@@ -45,46 +45,52 @@ export class King extends Piece {
     }
 
     getCastlingMoves(player: Player, fromSquare: Square, chessboard: Chessboard): Move[] {
+        if (player.isChecked) {
+            return [];
+        }
+
         let moves: Move[] = [];
 
-        if (!player.isChecked && (player.castlingRights.kingside || player.castlingRights.queenside)) {
-            let toSquare: Square | null = null;
-            let rookSquare: Square | null = null;
+        let toSquare: Square | null = null;
+        let rookSquare: Square | null = null;
 
-            const sides: CastlingSide[] = [];
-            player.castlingRights.kingside && sides.push(CastlingSide.Kingside);
-            player.castlingRights.queenside && sides.push(CastlingSide.Queenside);
+        const sides: CastlingSide[] = [];
+        if (player.castlingRights.kingside) sides.push(CastlingSide.Kingside);
+        if (player.castlingRights.queenside) sides.push(CastlingSide.Queenside);
 
-            for (const side of sides) {
-                const castlingDirection: Direction | null =
-                    side === CastlingSide.Kingside ? player.kingsideDirection : player.queensideDirection;
-                const castlingOffset: number =
-                    side === CastlingSide.Kingside ? King.KingsideCastlingOffset : King.QueensideCastlingOffset;
+        for (const side of sides) {
+            const direction: Direction | null =
+                side === CastlingSide.Kingside ? player.kingsideDirection : player.queensideDirection;
+            const offset: number =
+                side === CastlingSide.Kingside ? King.KingsideCastlingOffset : King.QueensideCastlingOffset;
 
-                if (castlingDirection) {
-                    toSquare = fromSquare;
-                    rookSquare = chessboard.getSquareByDirection(fromSquare, castlingDirection, castlingOffset);
+            if (!direction) continue;
 
-                    if (rookSquare && rookSquare.isOccupiedByPieceName(PieceName.Rook)) {
-                        toSquare = chessboard.getSquareByDirection(toSquare, castlingDirection);
-                        if (toSquare && toSquare.isEmpty()) {
-                            let move: Move = new Move(fromSquare, toSquare);
-                            if (!chessboard.isCheckedByMoving(player, move)) {
-                                toSquare = chessboard.getSquareByDirection(toSquare, castlingDirection);
-                                if (toSquare && toSquare.isEmpty()) {
-                                    move = new Castling(
-                                        fromSquare,
-                                        toSquare,
-                                        new Move(
-                                            rookSquare,
-                                            chessboard.getSquareByDirection(fromSquare, castlingDirection)!
-                                        ),
-                                        side
-                                    );
-                                    moves.push(move);
-                                }
-                            }
-                        }
+            rookSquare = chessboard.getSquareByDirection(fromSquare, direction, offset);
+            if (!rookSquare || !rookSquare.isOccupiedByPieceName(PieceName.Rook)) {
+                continue;
+            }
+
+            if (
+                side === CastlingSide.Queenside &&
+                !chessboard.getSquareByDirection(fromSquare, direction, offset - 1)?.isEmpty()
+            ) {
+                continue;
+            }
+
+            toSquare = chessboard.getSquareByDirection(fromSquare, direction);
+            if (toSquare && toSquare.isEmpty()) {
+                let move: Move = new Move(fromSquare, toSquare);
+                if (!chessboard.isCheckedByMoving(player, move)) {
+                    toSquare = chessboard.getSquareByDirection(toSquare, direction);
+                    if (toSquare && toSquare.isEmpty()) {
+                        move = new Castling(
+                            fromSquare,
+                            toSquare,
+                            new Move(rookSquare, chessboard.getSquareByDirection(fromSquare, direction)!),
+                            side
+                        );
+                        moves.push(move);
                     }
                 }
             }

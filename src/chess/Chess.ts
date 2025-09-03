@@ -1,15 +1,15 @@
-import { Directions } from "./coordinates/Directions";
-import { PieceName } from "./types/PieceName";
-import { PlayerColor } from "./types/PlayerColor";
-import { LegalMoves } from "./types/LegalMoves";
-import { HistoryEntry } from "./types/HistoryEntry";
-import { Fen } from "./fen/Fen";
-import { Piece } from "./pieces/Piece";
-import { Player } from "./players/Player";
-import { Move } from "./moves/Move";
-import { Chessboard } from "./board/Chessboard";
-import { MoveDTO } from "./dto/MoveDTO";
-import { LegalMovesDTO } from "./dto/LegalMovesDTO";
+import { Directions } from "../coordinates/Directions";
+import { PieceName } from "../types/PieceName";
+import { PlayerColor } from "../types/PlayerColor";
+import { LegalMoves } from "../types/LegalMoves";
+import { HistoryEntry } from "../types/HistoryEntry";
+import { Fen } from "../fen/Fen";
+import { Piece } from "../pieces/Piece";
+import { Player } from "../players/Player";
+import { Move } from "../moves/Move";
+import { Chessboard } from "../board/Chessboard";
+import { MoveDTO } from "../dto/MoveDTO";
+import { LegalMovesDTO } from "../dto/LegalMovesDTO";
 
 export class Chess {
     players: Player[];

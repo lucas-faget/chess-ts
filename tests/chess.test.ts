@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Chess } from "../src/Chess";
+import { Chess } from "../src/chess/Chess";
 
 describe("Chess", () => {
     it("should returns the initial FEN string", () => {

@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { PlayerColor } from "../../src/types/PlayerColor";
 import { PieceName } from "../../src/types/PieceName";
 import { Square } from "../../src/board/Square";
-import { Chess } from "../../src/Chess";
+import { Chess } from "../../src/chess/Chess";
 import { MoveDTO } from "../../src/dto/MoveDTO";
 
 const sq = (chess: Chess, squareName: string): Square | null => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { PlayerColor } from "../../src/types/PlayerColor";
-import { Chess } from "../../src/Chess";
+import { Chess } from "../../src/chess/Chess";
 import { testMove } from "../helpers/moves";
 
 describe("Pawn", () => {

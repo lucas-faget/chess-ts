@@ -24,18 +24,8 @@ export class Chess {
         const fen: Fen = Fen.fromFenString(fenString);
 
         this.players = [
-            new Player(
-                PlayerColor.White,
-                "Whites",
-                Directions.Up,
-                Fen.stringToCastlingRights(fen.castlingRights, PlayerColor.White)
-            ),
-            new Player(
-                PlayerColor.Black,
-                "Blacks",
-                Directions.Down,
-                Fen.stringToCastlingRights(fen.castlingRights, PlayerColor.Black)
-            ),
+            new Player(PlayerColor.White, "Whites", Directions.Up, fen.castlingRecord[PlayerColor.White]),
+            new Player(PlayerColor.Black, "Blacks", Directions.Down, fen.castlingRecord[PlayerColor.Black]),
         ];
 
         this.chessboard = new Chessboard(fen.position);
@@ -116,7 +106,7 @@ export class Chess {
         const fen: Fen = new Fen(
             this.chessboard.toFen(),
             color,
-            this.players.map((p) => Fen.castlingRightsToString(p.castlingRights, p.color)).join(""),
+            Object.fromEntries(this.players.map((p) => [p.color as string, p.castlingRights])),
             enPassantTarget,
             this.halfmoveClock,
             this.fullmoveNumber
@@ -165,11 +155,9 @@ export class Chess {
         //this.halfmoveClock--;
         this.setPreviousPlayer();
         this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
-        this.getActivePlayer().castlingRights = Fen.stringToCastlingRights(
-            Fen.fromFenString(fenString).castlingRights,
-            this.getActivePlayer().color
-        );
-        this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
+        (this.getActivePlayer().castlingRights =
+            Fen.fromFenString(fenString).castlingRecord[this.getActivePlayer().color]),
+            (this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer()));
         this.setLegalMoves();
 
         return move;

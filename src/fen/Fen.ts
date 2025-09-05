@@ -4,7 +4,7 @@ import { CastlingRights } from "../types/CastlingRights";
 export class Fen {
     position: string;
     activePlayer: string;
-    castlingRights: string;
+    castlingRecord: Record<string, CastlingRights>;
     enPassantTarget: string;
     halfmoveClock: number;
     fullmoveNumber: number;
@@ -12,14 +12,14 @@ export class Fen {
     constructor(
         position: string,
         color: PlayerColor,
-        castlingRights: string,
+        castlingRecord: Record<string, CastlingRights>,
         enPassantTarget: string | null,
         halfmoveClock: number,
         fullmoveNumber: number
     ) {
         this.position = position;
         this.activePlayer = color as string;
-        this.castlingRights = castlingRights || "-";
+        this.castlingRecord = castlingRecord;
         this.enPassantTarget = enPassantTarget || "-";
         this.halfmoveClock = halfmoveClock;
         this.fullmoveNumber = fullmoveNumber;
@@ -40,10 +40,14 @@ export class Fen {
     static fromFenString(fenString: string): Fen {
         const [position, activePlayer, castlingRights, enPassantTarget, halfmoveClock, fullmoveNumber] =
             fenString.split(" ");
+
         return new Fen(
             position,
             activePlayer as PlayerColor,
-            castlingRights,
+            {
+                w: Fen.stringToCastlingRights(castlingRights, PlayerColor.White),
+                b: Fen.stringToCastlingRights(castlingRights, PlayerColor.Black),
+            },
             enPassantTarget,
             Number(halfmoveClock),
             Number(fullmoveNumber)
@@ -51,6 +55,11 @@ export class Fen {
     }
 
     toString(): string {
-        return `${this.position} ${this.activePlayer} ${this.castlingRights} ${this.enPassantTarget} ${this.halfmoveClock} ${this.fullmoveNumber}`;
+        const castlingRights: string =
+            Object.entries(this.castlingRecord)
+                .map(([color, rights]) => Fen.castlingRightsToString(rights, color as PlayerColor))
+                .join("") || "-";
+
+        return `${this.position} ${this.activePlayer} ${castlingRights} ${this.enPassantTarget} ${this.halfmoveClock} ${this.fullmoveNumber}`;
     }
 }

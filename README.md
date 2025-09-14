@@ -1,4 +1,4 @@
-# chess-ts
+# chess-lib
 
 A TypeScript chess library.
 
@@ -15,7 +15,7 @@ npm run start
 ### Import
 
 ```ts
-import { chess } from "chess-ts";
+import { chess } from "chess-lib";
 ```
 
 ### Create a game

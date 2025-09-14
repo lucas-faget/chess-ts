@@ -1,4 +1,4 @@
-import { chess } from "chess-ts";
+import { chess } from "chess-lib";
 
 const game = chess.new();
 game.tryMove("e2", "e4");

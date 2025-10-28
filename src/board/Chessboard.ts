@@ -13,7 +13,9 @@ import { King } from "../pieces/King";
 import { Square } from "./Square";
 import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
+import { PieceDTO } from "../dto/PieceDTO";
 import { MoveDTO } from "../dto/MoveDTO";
+import { ChessboardDTO } from "../dto/ChessboardDTO";
 
 const isInteger = (char: string) => !isNaN(parseInt(char));
 const isPieceName = (char: string) => Object.values(PieceName).includes(char.toLowerCase() as PieceName);
@@ -351,5 +353,14 @@ export class Chessboard {
 
         board += border;
         return board;
+    }
+
+    serialize(): ChessboardDTO {
+        const chessboard: Record<string, PieceDTO | null> = {};
+        for (const [squareName, square] of this.squares.entries()) {
+            chessboard[squareName] = square.piece?.serialize() ?? null;
+        }
+
+        return chessboard;
     }
 }

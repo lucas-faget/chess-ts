@@ -1,5 +1,5 @@
-export { chess } from "./api";
-export type { IChess as Chess } from "./api";
+export { chess } from "./api/chess";
+export type { IChess as Chess } from "./api/chess";
 
 export type * from "./coordinates/Position";
 export type * from "./coordinates/Direction";

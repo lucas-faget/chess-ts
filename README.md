@@ -21,19 +21,19 @@ import { chess } from "chess-lib";
 ### Create a game
 
 ```ts
-const c: IChess = chess.new();
+const game: Chess = chess.new();
 ```
 
 To init a chess game from a specific position, use `fromFen`:
 
 ```ts
-const c: IChess = chess.fromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+const game: Chess = chess.fromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 ```
 
 ### Check if a move is legal
 
 ```ts
-if (c.isLegalMove("e2", "e4")) {
+if (game.isLegalMove("e2", "e4")) {
     ...
 }
 ```
@@ -41,37 +41,37 @@ if (c.isLegalMove("e2", "e4")) {
 ### Play a move
 
 ```ts
-c.tryMove("e2", "e4");
+game.tryMove("e2", "e4");
 ```
 
 `tryMove` attempts to play a move.
 
 It returns :
 
--   `MoveDTO` object if the move was successfully played
+- `Move` object if the move was successfully played
 
--   Returns `null` if the move is illegal or cannot be played
+- Returns `null` if the move is illegal or cannot be played
 
 ```ts
-const move: MoveDTO | null = c.tryMove("e2", "e4");
+const move: Move | null = game.tryMove("e2", "e4");
 ```
 
 ### Cancel the last move
 
 ```ts
-c.cancelLastMove();
+game.cancelLastMove();
 ```
 
 `cancelLastMove` undoes the last played move.
 
 It returns :
 
--   `MoveDTO` object containing the details of the undone move
+- `Move` object containing the details of the undone move
 
--   `null` if there are no moves to undo
+- `null` if there are no moves to undo
 
 ```ts
-const lastMove: MoveDTO | null = c.cancelLastMove();
+const lastMove: Move | null = game.cancelLastMove();
 ```
 
 ### Export the current position as FEN
@@ -82,56 +82,105 @@ const fen: string = game.toFen();
 
 ## API
 
-### IChess
+### Chess
 
 ```ts
-interface IChess {
+interface Chess {
+    ranks: string[];
+    files: string[];
+    players: Player[];
+    getChessboard(): Chessboard;
+    getLegalMoves(): LegalMoves;
     isLegalMove(from: string, to: string): boolean;
-    tryMove(from: string, to: string): MoveDTO | null;
-    cancelLastMove(): MoveDTO | null;
+    tryMove(from: string, to: string): Move | null;
+    cancelLastMove(): Move | null;
     toFen(): string;
 }
 ```
 
-### new(): IChess
+### new(): Chess
 
 Creates a chess game from the standard chess initial position.
 
-Returns `IChess`
+Returns `Chess`
 
-### fromFen(fen: string): IChess
+### fromFen(fen: string): Chess
 
 Creates a chess game from a given FEN string.
 
 Parameters :
 
--   fen `string` : A FEN string representing the board position
+- fen `string` : A FEN string representing the board position
 
-Returns `IChess`
+Returns `Chess`
 
 ## Types
 
-### MoveDTO
+### Position
 
 ```ts
-type MoveDTO = {
+type Position = {
+    x: number;
+    y: number;
+};
+```
+
+### Direction
+
+```ts
+type Direction = {
+    dx: number;
+    dy: number;
+};
+```
+
+### Player
+
+```ts
+type Player = {
+    name: string;
+    color: string;
+    direction: Direction;
+};
+```
+
+### Piece
+
+```ts
+type Piece = {
+    color: string;
+    name: string;
+};
+```
+
+### Move
+
+```ts
+type Move = {
     algebraic?: string;
     fromPosition?: Position;
     toPosition?: Position;
     fromSquare: string;
     toSquare: string;
     captureSquare?: string | null;
-    capturedPiece?: PieceDTO | null;
-    nestedMove?: MoveDTO | null;
+    capturedPiece?: Piece | null;
+    nestedMove?: Move | null;
     isPromoting?: boolean;
 };
 ```
 
-### PieceDTO
+### LegalMoves
 
 ```ts
-type PieceDTO = {
-    color: string;
-    name: string;
-};
+interface LegalMoves {
+    [from: string]: {
+        [to: string]: boolean;
+    };
+}
+```
+
+### Chessboard
+
+```ts
+type Chessboard = Record<string, Piece | null>;
 ```

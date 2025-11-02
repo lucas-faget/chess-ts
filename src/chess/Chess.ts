@@ -8,6 +8,7 @@ import { Piece } from "../pieces/Piece";
 import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { Chessboard } from "../board/Chessboard";
+import { PlayerDTO } from "../dto/PlayerDTO";
 import { MoveDTO } from "../dto/MoveDTO";
 import { LegalMovesDTO } from "../dto/LegalMovesDTO";
 
@@ -109,7 +110,7 @@ export class Chess {
             Object.fromEntries(this.players.map((p) => [p.color as string, p.castlingRights])),
             enPassantTarget,
             this.halfmoveClock,
-            this.fullmoveNumber
+            this.fullmoveNumber,
         );
 
         this.history.push({
@@ -155,12 +156,16 @@ export class Chess {
         //this.halfmoveClock--;
         this.setPreviousPlayer();
         this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
-        (this.getActivePlayer().castlingRights =
+        ((this.getActivePlayer().castlingRights =
             Fen.fromFenString(fenString).castlingRecord[this.getActivePlayer().color]),
-            (this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer()));
+            (this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer())));
         this.setLegalMoves();
 
         return move;
+    }
+
+    serializePlayers(): PlayerDTO[] {
+        return this.players.map((p) => p.serialize());
     }
 
     serializeLegalMoves(): LegalMovesDTO {
@@ -168,7 +173,7 @@ export class Chess {
             Object.entries(this.legalMoves).map(([from, tos]) => [
                 from,
                 Object.fromEntries(Object.keys(tos).map((to) => [to, true])),
-            ])
+            ]),
         );
     }
 

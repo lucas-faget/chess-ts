@@ -10,6 +10,7 @@ import { King } from "../pieces/King";
 import { Square } from "../board/Square";
 import { Move } from "../moves/Move";
 import { Chessboard } from "../board/Chessboard";
+import { PlayerDTO } from "../dto/PlayerDTO";
 
 export class Player {
     name: string;
@@ -27,7 +28,7 @@ export class Player {
         color: PlayerColor,
         name: string,
         direction: Direction,
-        castlingRights: CastlingRights = { kingside: true, queenside: true }
+        castlingRights: CastlingRights = { kingside: true, queenside: true },
     ) {
         this.color = color;
         this.name = name;
@@ -56,7 +57,7 @@ export class Player {
                     chessboard.getSquareByDirection(
                         this.kingSquare,
                         this.kingsideDirection,
-                        King.KingsideCastlingOffset
+                        King.KingsideCastlingOffset,
                     ) === move.fromSquare
                 ) {
                     this.castlingRights.kingside = false;
@@ -67,12 +68,20 @@ export class Player {
                     chessboard.getSquareByDirection(
                         this.kingSquare,
                         this.queensideDirection,
-                        King.QueensideCastlingOffset
+                        King.QueensideCastlingOffset,
                     ) === move.fromSquare
                 ) {
                     this.castlingRights.queenside = false;
                 }
             }
         }
+    }
+
+    serialize(): PlayerDTO {
+        return {
+            name: this.name,
+            color: this.color as string,
+            direction: this.direction,
+        };
     }
 }

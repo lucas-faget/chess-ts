@@ -7,6 +7,7 @@ import { Fen } from "../fen/Fen";
 import { Piece } from "../pieces/Piece";
 import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
+import { Capture } from "../moves/Capture";
 import { Chessboard } from "../board/Chessboard";
 import { PlayerDTO } from "../dto/PlayerDTO";
 import { MoveDTO } from "../dto/MoveDTO";
@@ -120,6 +121,7 @@ export class Chess {
     }
 
     playMove(move: Move): void {
+        const isPawnMove: boolean = move.fromSquare.piece?.getName() === PieceName.Pawn;
         const moveDTO: MoveDTO = move.serialize();
         this.getActivePlayer().isChecked = false;
         move.carryOutMove();
@@ -127,7 +129,7 @@ export class Chess {
         this.getActivePlayer().updateCastlingRights(move, this.chessboard);
         this.setNextPlayer();
         if (this.activePlayerIndex === 0) this.fullmoveNumber++;
-        //this.halfmoveClock++;
+        this.halfmoveClock = isPawnMove || move instanceof Capture ? 0 : this.halfmoveClock + 1;
         this.storeHistoryEntry(moveDTO, move.enPassantTarget);
         this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
         this.setLegalMoves();
@@ -150,16 +152,17 @@ export class Chess {
 
         const move: MoveDTO | null = this.history.pop()?.move ?? null;
         const fenString: string = this.history[this.history.length - 1].fenString;
+        const fen: Fen = Fen.fromFenString(fenString);
 
         this.getActivePlayer().isChecked = false;
         if (move) this.chessboard.undoMove(move);
-        if (this.activePlayerIndex === 0) this.fullmoveNumber--;
-        //this.halfmoveClock--;
+        this.fullmoveNumber = fen.fullmoveNumber;
+        this.halfmoveClock = fen.halfmoveClock;
         this.setPreviousPlayer();
-        this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
-        ((this.getActivePlayer().castlingRights =
-            Fen.fromFenString(fenString).castlingRecord[this.getActivePlayer().color]),
-            (this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer())));
+        const activePlayer: Player = this.getActivePlayer();
+        activePlayer.kingSquare = this.chessboard.findKingSquare(activePlayer.color);
+        activePlayer.castlingRights = fen.castlingRecord[activePlayer.color];
+        activePlayer.isChecked = this.chessboard.isChecked(activePlayer);
         this.setLegalMoves();
 
         return move;

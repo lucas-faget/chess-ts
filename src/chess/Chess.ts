@@ -120,6 +120,7 @@ export class Chess {
     }
 
     playMove(move: Move): void {
+        const moveDTO: MoveDTO = move.serialize();
         this.getActivePlayer().isChecked = false;
         move.carryOutMove();
         this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
@@ -127,7 +128,7 @@ export class Chess {
         this.setNextPlayer();
         if (this.activePlayerIndex === 0) this.fullmoveNumber++;
         //this.halfmoveClock++;
-        this.storeHistoryEntry(move.serialize(), move.enPassantTarget);
+        this.storeHistoryEntry(moveDTO, move.enPassantTarget);
         this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
         this.setLegalMoves();
     }

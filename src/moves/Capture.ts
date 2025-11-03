@@ -27,7 +27,7 @@ export class Capture extends Move {
 
         if (this.fromSquare.piece) {
             const piece: Piece = this.fromSquare.piece;
-            const pieceName: string = piece.getName();
+            const pieceName: PieceName = piece.getName();
 
             if (pieceName !== PieceName.Pawn) {
                 move += pieceName.toUpperCase();

@@ -39,7 +39,7 @@ export class Chess {
         this.fullmoveNumber = fen.fullmoveNumber;
 
         this.history.push({
-            fenString,
+            fen: fenString,
             move: null,
         });
 
@@ -96,8 +96,7 @@ export class Chess {
     setLegalMoves(): void {
         const player: Player = this.getActivePlayer();
         if (player.kingSquare) {
-            const fenString: string | null =
-                this.history.length > 0 ? this.history[this.history.length - 1].fenString : null;
+            const fenString: string | null = this.history.length > 0 ? this.history[this.history.length - 1].fen : null;
             const enPassantTarget: string | null = fenString ? Fen.fromFenString(fenString).enPassantTarget : null;
             this.legalMoves = this.chessboard.getLegalMoves(player, enPassantTarget);
         }
@@ -115,7 +114,7 @@ export class Chess {
         );
 
         this.history.push({
-            fenString: fen.toString(),
+            fen: fen.toString(),
             move,
         });
     }
@@ -151,7 +150,7 @@ export class Chess {
         }
 
         const move: MoveDTO | null = this.history.pop()?.move ?? null;
-        const fenString: string = this.history[this.history.length - 1].fenString;
+        const fenString: string = this.history[this.history.length - 1].fen;
         const fen: Fen = Fen.fromFenString(fenString);
 
         this.getActivePlayer().isChecked = false;
@@ -182,6 +181,6 @@ export class Chess {
     }
 
     toFen(): string {
-        return this.history.length > 0 ? this.history[this.history.length - 1].fenString : "";
+        return this.history.length > 0 ? this.history[this.history.length - 1].fen : "";
     }
 }

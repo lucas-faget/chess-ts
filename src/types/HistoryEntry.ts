@@ -1,6 +1,6 @@
 import { MoveDTO } from "../dto/MoveDTO";
 
 export type HistoryEntry = {
-    fenString: string;
+    fen: string;
     move: MoveDTO | null;
 };

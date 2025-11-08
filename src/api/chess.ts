@@ -2,12 +2,14 @@ import { Chess } from "../chess/Chess";
 import { PlayerDTO } from "../dto/PlayerDTO";
 import { MoveDTO } from "../dto/MoveDTO";
 import { LegalMovesDTO } from "../dto/LegalMovesDTO";
+import { HistoryEntry } from "../types/HistoryEntry";
 import { chessboard, IChessboard } from "./chessboard";
 
 export interface IChess {
     players: PlayerDTO[];
     getChessboard(): IChessboard;
     getLegalMoves(): LegalMovesDTO;
+    getHistory(): HistoryEntry[];
     isLegalMove(from: string, to: string): boolean;
     tryMove(from: string, to: string): MoveDTO | null;
     cancelLastMove(): MoveDTO | null;
@@ -19,6 +21,7 @@ function createPublicApi(chess: Chess): IChess {
         players: chess.serializePlayers(),
         getChessboard: () => chessboard.fromFen(chess.chessboard.toFen()),
         getLegalMoves: () => chess.serializeLegalMoves(),
+        getHistory: () => chess.history,
         isLegalMove: (from: string, to: string): boolean => chess.isLegalMove(from, to),
         tryMove: (from: string, to: string): MoveDTO | null => chess.tryMove(from, to),
         cancelLastMove: (): MoveDTO | null => chess.cancelLastMove(),

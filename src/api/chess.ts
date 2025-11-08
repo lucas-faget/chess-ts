@@ -2,13 +2,11 @@ import { Chess } from "../chess/Chess";
 import { PlayerDTO } from "../dto/PlayerDTO";
 import { MoveDTO } from "../dto/MoveDTO";
 import { LegalMovesDTO } from "../dto/LegalMovesDTO";
-import { ChessboardDTO } from "../dto/ChessboardDTO";
+import { chessboard, IChessboard } from "./chessboard";
 
 export interface IChess {
-    ranks: string[];
-    files: string[];
     players: PlayerDTO[];
-    getChessboard(): ChessboardDTO;
+    getChessboard(): IChessboard;
     getLegalMoves(): LegalMovesDTO;
     isLegalMove(from: string, to: string): boolean;
     tryMove(from: string, to: string): MoveDTO | null;
@@ -16,12 +14,10 @@ export interface IChess {
     toFen(): string;
 }
 
-export function createPublicApi(chess: Chess): IChess {
+function createPublicApi(chess: Chess): IChess {
     return {
-        ranks: chess.chessboard.ranks,
-        files: chess.chessboard.files,
         players: chess.serializePlayers(),
-        getChessboard: () => chess.chessboard.serialize(),
+        getChessboard: () => chessboard.fromFen(chess.chessboard.toFen()),
         getLegalMoves: () => chess.serializeLegalMoves(),
         isLegalMove: (from: string, to: string): boolean => chess.isLegalMove(from, to),
         tryMove: (from: string, to: string): MoveDTO | null => chess.tryMove(from, to),

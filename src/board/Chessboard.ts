@@ -15,11 +15,8 @@ import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
 import { PieceDTO } from "../dto/PieceDTO";
 import { MoveDTO } from "../dto/MoveDTO";
-import { ChessboardDTO } from "../dto/ChessboardDTO";
-
-const isInteger = (char: string) => !isNaN(parseInt(char));
-const isPieceName = (char: string) => Object.values(PieceName).includes(char.toLowerCase() as PieceName);
-const isPlayerColor = (char: string) => Object.values(PlayerColor).includes(char.toLowerCase() as PlayerColor);
+import { SquaresDTO } from "../dto/SquaresDTO";
+import { isInteger, isPieceName } from "../utils";
 
 export class Chessboard {
     static Ranks: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
@@ -66,6 +63,19 @@ export class Chessboard {
         });
     }
 
+    setSquare(squareName: string, piece: PieceDTO | null): void {
+        const square: Square | null = this.getSquareByName(squareName);
+        if (square) {
+            if (square) {
+                if (piece) {
+                    square.setPiece(piece.name as PieceName, piece.color as PlayerColor);
+                } else {
+                    square.piece = null;
+                }
+            }
+        }
+    }
+
     empty(): void {
         for (const [y, rank] of this.ranks.entries()) {
             for (const [x, file] of this.files.entries()) {
@@ -83,18 +93,26 @@ export class Chessboard {
 
             for (const char of row) {
                 if (isInteger(char)) {
-                    x += parseInt(char, 10);
+                    const emptyCount: number = parseInt(char, 10);
+                    for (let i = 0; i < emptyCount; i++) {
+                        const square: Square | null = this.getSquareByName(this.files[x] + this.ranks[y]);
+                        if (square) square.piece = null;
+                        x++;
+                    }
                     continue;
                 }
 
                 if (!isPieceName(char)) {
+                    const square: Square | null = this.getSquareByName(this.files[x] + this.ranks[y]);
+                    if (square) square.piece = null;
                     x++;
                     continue;
                 }
 
                 const pieceName = char.toLowerCase() as PieceName;
                 const playerColor = char === char.toUpperCase() ? PlayerColor.White : PlayerColor.Black;
-                this.getSquareByName(this.files[x] + this.ranks[y])?.setPiece(pieceName, playerColor);
+                const square: Square | null = this.getSquareByName(this.files[x] + this.ranks[y]);
+                if (square) square.setPiece(pieceName, playerColor);
 
                 x++;
             }
@@ -111,7 +129,7 @@ export class Chessboard {
         return null;
     }
 
-    move(move: MoveDTO): void {
+    carryoutMove(move: MoveDTO): void {
         const fromSquare: Square | null = this.getSquareByName(move.fromSquare);
         const toSquare: Square | null = this.getSquareByName(move.toSquare);
         const captureSquare: Square | null = move.captureSquare ? this.getSquareByName(move.captureSquare) : null;
@@ -123,7 +141,7 @@ export class Chessboard {
         }
 
         if (move.nestedMove) {
-            this.move(move.nestedMove);
+            this.carryoutMove(move.nestedMove);
         }
     }
 
@@ -340,7 +358,6 @@ export class Chessboard {
         const border: string = "+ --------------- +\n";
         let board: string = header + border;
 
-        // On parcourt les rangées de la plus haute (8) à la plus basse (1)
         this.reversedRanks.map((rank) => {
             let row: string = "| ";
             for (const file of this.files) {
@@ -355,12 +372,12 @@ export class Chessboard {
         return board;
     }
 
-    serialize(): ChessboardDTO {
-        const chessboard: Record<string, PieceDTO | null> = {};
+    serialize(): SquaresDTO {
+        const squares: SquaresDTO = {};
         for (const [squareName, square] of this.squares.entries()) {
-            chessboard[squareName] = square.piece?.serialize() ?? null;
+            squares[squareName] = square.piece?.serialize() ?? null;
         }
 
-        return chessboard;
+        return squares;
     }
 }

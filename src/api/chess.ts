@@ -10,6 +10,7 @@ export interface IChess {
     getChessboard(): IChessboard;
     getLegalMoves(): LegalMovesDTO;
     getHistory(): HistoryEntry[];
+    getActivePlayerIndex(): number;
     isLegalMove(from: string, to: string): boolean;
     tryMove(from: string, to: string): MoveDTO | null;
     cancelLastMove(): MoveDTO | null;
@@ -22,6 +23,7 @@ function createPublicApi(chess: Chess): IChess {
         getChessboard: () => chessboard.fromFen(chess.chessboard.toFen()),
         getLegalMoves: () => chess.serializeLegalMoves(),
         getHistory: () => chess.history,
+        getActivePlayerIndex: () => chess.activePlayerIndex,
         isLegalMove: (from: string, to: string): boolean => chess.isLegalMove(from, to),
         tryMove: (from: string, to: string): MoveDTO | null => chess.tryMove(from, to),
         cancelLastMove: (): MoveDTO | null => chess.cancelLastMove(),

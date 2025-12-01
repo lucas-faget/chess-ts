@@ -34,6 +34,8 @@ export class Chess {
         this.setKingSquares();
 
         this.activePlayerIndex = this.players.findIndex((p) => (p.color as string) === fen.activePlayer) ?? 0;
+        const activePlayer: Player = this.getActivePlayer();
+        activePlayer.isChecked = this.chessboard.isChecked(activePlayer);
 
         this.halfmoveClock = fen.halfmoveClock;
         this.fullmoveNumber = fen.fullmoveNumber;
@@ -41,6 +43,7 @@ export class Chess {
         this.history.push({
             fen: fenString,
             move: null,
+            checkedSquare: activePlayer.isChecked ? (activePlayer.kingSquare?.name ?? null) : null,
         });
 
         this.setLegalMoves();
@@ -103,10 +106,10 @@ export class Chess {
     }
 
     storeHistoryEntry(move: MoveDTO, enPassantTarget: string | null): void {
-        const color: PlayerColor = this.getActivePlayer().color;
+        const activePlayer: Player = this.getActivePlayer();
         const fen: Fen = new Fen(
             this.chessboard.toFen(),
-            color,
+            activePlayer.color,
             Object.fromEntries(this.players.map((p) => [p.color as string, p.castlingRights])),
             enPassantTarget,
             this.halfmoveClock,
@@ -116,6 +119,7 @@ export class Chess {
         this.history.push({
             fen: fen.toString(),
             move,
+            checkedSquare: activePlayer.isChecked ? (activePlayer.kingSquare?.name ?? null) : null,
         });
     }
 
@@ -129,8 +133,8 @@ export class Chess {
         this.setNextPlayer();
         if (this.activePlayerIndex === 0) this.fullmoveNumber++;
         this.halfmoveClock = isPawnMove || move instanceof Capture ? 0 : this.halfmoveClock + 1;
-        this.storeHistoryEntry(moveDTO, move.enPassantTarget);
         this.getActivePlayer().isChecked = this.chessboard.isChecked(this.getActivePlayer());
+        this.storeHistoryEntry(moveDTO, move.enPassantTarget);
         this.setLegalMoves();
     }
 

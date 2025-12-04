@@ -104,7 +104,7 @@ const board: Chessboard = chessboard.new();
 To init a chessboard from a piece placement field, use `fromFen` :
 
 ```ts
-const game: Chessboard = chessboard.fromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
+const board: Chessboard = chessboard.fromFen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR");
 ```
 
 # API

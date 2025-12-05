@@ -22,8 +22,8 @@ export class Chess {
     history: HistoryEntry[] = [];
     legalMoves: LegalMoves = {};
 
-    constructor(fenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-        const fen: Fen = Fen.fromFenString(fenString);
+    constructor(fenString = Fen.InitialFenString) {
+        const fen: Fen = Fen.fromString(fenString);
 
         this.players = [
             new Player(PlayerColor.White, "Whites", Directions.Up, fen.castlingRecord[PlayerColor.White]),
@@ -100,7 +100,7 @@ export class Chess {
         const player: Player = this.getActivePlayer();
         if (player.kingSquare) {
             const fenString: string | null = this.history.length > 0 ? this.history[this.history.length - 1].fen : null;
-            const enPassantTarget: string | null = fenString ? Fen.fromFenString(fenString).enPassantTarget : null;
+            const enPassantTarget: string | null = fenString ? Fen.fromString(fenString).enPassantTarget : null;
             this.legalMoves = this.chessboard.getLegalMoves(player, enPassantTarget);
         }
     }
@@ -155,7 +155,7 @@ export class Chess {
 
         const move: MoveDTO | null = this.history.pop()?.move ?? null;
         const fenString: string = this.history[this.history.length - 1].fen;
-        const fen: Fen = Fen.fromFenString(fenString);
+        const fen: Fen = Fen.fromString(fenString);
 
         this.getActivePlayer().isChecked = false;
         if (move) this.chessboard.undoMove(move);

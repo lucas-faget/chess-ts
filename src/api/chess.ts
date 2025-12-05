@@ -1,4 +1,5 @@
 import { Chess } from "../chess/Chess";
+import { FischerRandomChess } from "../chess/FischerRandomChess";
 import { PlayerDTO } from "../dto/PlayerDTO";
 import { MoveDTO } from "../dto/MoveDTO";
 import { LegalMovesDTO } from "../dto/LegalMovesDTO";
@@ -38,6 +39,10 @@ export const chess = {
     },
     fromFen: (fen: string): IChess => {
         const c: Chess = new Chess(fen);
+        return createPublicApi(c);
+    },
+    fischerRandom: (): IChess => {
+        const c: Chess = new FischerRandomChess();
         return createPublicApi(c);
     },
 };

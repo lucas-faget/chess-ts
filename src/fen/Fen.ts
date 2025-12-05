@@ -2,6 +2,8 @@ import { PlayerColor } from "../types/PlayerColor";
 import { CastlingRights } from "../types/CastlingRights";
 
 export class Fen {
+    static InitialFenString = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
     position: string;
     activePlayer: string;
     castlingRecord: Record<string, CastlingRights>;
@@ -10,12 +12,15 @@ export class Fen {
     fullmoveNumber: number;
 
     constructor(
-        position: string,
-        color: PlayerColor,
-        castlingRecord: Record<string, CastlingRights>,
-        enPassantTarget: string | null,
-        halfmoveClock: number,
-        fullmoveNumber: number
+        position: string = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR",
+        color: PlayerColor = PlayerColor.White,
+        castlingRecord: Record<string, CastlingRights> = {
+            w: { kingside: true, queenside: true },
+            b: { kingside: true, queenside: true },
+        },
+        enPassantTarget: string | null = null,
+        halfmoveClock: number = 0,
+        fullmoveNumber: number = 1,
     ) {
         this.position = position;
         this.activePlayer = color as string;
@@ -25,19 +30,19 @@ export class Fen {
         this.fullmoveNumber = fullmoveNumber;
     }
 
-    static stringToCastlingRights(fenString: string, color: PlayerColor): CastlingRights {
+    static parseCastlingRights(fenString: string, color: PlayerColor): CastlingRights {
         return {
             kingside: fenString.includes(color === PlayerColor.Black ? "k" : "K"),
             queenside: fenString.includes(color === PlayerColor.Black ? "q" : "Q"),
         };
     }
 
-    static castlingRightsToString(castlingRights: CastlingRights, color: PlayerColor): string {
+    static serializeCastlingRights(castlingRights: CastlingRights, color: PlayerColor): string {
         const fenString: string = (castlingRights.kingside ? "K" : "") + (castlingRights.queenside ? "Q" : "");
         return color === PlayerColor.Black ? fenString.toLowerCase() : fenString;
     }
 
-    static fromFenString(fenString: string): Fen {
+    static fromString(fenString: string): Fen {
         const [position, activePlayer, castlingRights, enPassantTarget, halfmoveClock, fullmoveNumber] =
             fenString.split(" ");
 
@@ -45,19 +50,19 @@ export class Fen {
             position,
             activePlayer as PlayerColor,
             {
-                w: Fen.stringToCastlingRights(castlingRights, PlayerColor.White),
-                b: Fen.stringToCastlingRights(castlingRights, PlayerColor.Black),
+                w: Fen.parseCastlingRights(castlingRights, PlayerColor.White),
+                b: Fen.parseCastlingRights(castlingRights, PlayerColor.Black),
             },
             enPassantTarget,
             Number(halfmoveClock),
-            Number(fullmoveNumber)
+            Number(fullmoveNumber),
         );
     }
 
     toString(): string {
         const castlingRights: string =
             Object.entries(this.castlingRecord)
-                .map(([color, rights]) => Fen.castlingRightsToString(rights, color as PlayerColor))
+                .map(([color, rights]) => Fen.serializeCastlingRights(rights, color as PlayerColor))
                 .join("") || "-";
 
         return `${this.position} ${this.activePlayer} ${castlingRights} ${this.enPassantTarget} ${this.halfmoveClock} ${this.fullmoveNumber}`;

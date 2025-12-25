@@ -141,6 +141,12 @@ Creates a chess game from a given FEN record.
 
 Returns `Chess`
 
+### fischerRandom(): Chess
+
+Creates a Fischer Random chess game.
+
+Returns `Chess`
+
 ## Chessboard
 
 ```ts

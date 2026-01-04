@@ -41,8 +41,9 @@ export const chess = {
         const c: Chess = new Chess(fen);
         return createPublicApi(c);
     },
-    fischerRandom: (): IChess => {
-        const c: Chess = new FischerRandomChess();
+    fischerRandom: (id: number | string | undefined = undefined): IChess => {
+        id = id !== undefined && !Number.isNaN(Number(id)) ? Number(id) : undefined;
+        const c: Chess = new FischerRandomChess(id);
         return createPublicApi(c);
     },
 };

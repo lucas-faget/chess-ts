@@ -147,6 +147,28 @@ Creates a Fischer Random chess game.
 
 Returns `Chess`
 
+### fischerRandomById(identifier: number | string): Chess
+
+Creates a Fischer Random chess game from a given position identifier.
+
+| Parameter    | Type                 | Description                                   |
+| ------------ | -------------------- | --------------------------------------------- |
+| `identifier` | `number` or `string` | **Required**. An identifier between 0 and 959 |
+
+| ID  | Fen                                                      |
+| --- | -------------------------------------------------------- |
+| 000 | bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w KQkq - 0 1 |
+| 001 | bqnbnrkr/pppppppp/8/8/8/8/PPPPPPPP/BQNBNRKR w KQkq - 0 1 |
+| 002 | bqnnrbkr/pppppppp/8/8/8/8/PPPPPPPP/BQNNRBKR w KQkq - 0 1 |
+| ... | ...                                                      |
+| 518 | rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 |
+| ... | ...                                                      |
+| 959 | rkrnnqbb/pppppppp/8/8/8/8/PPPPPPPP/RKRNNQBB w KQkq - 0 1 |
+
+- The identifier **518** refers to the standard chess initial position
+
+Returns `Chess`
+
 ## Chessboard
 
 ```ts

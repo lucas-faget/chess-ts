@@ -13,6 +13,7 @@ import { King } from "../pieces/King";
 import { Square } from "./Square";
 import { Player } from "../players/Player";
 import { Move } from "../moves/Move";
+import { Castling } from "../moves/Castling";
 import { PieceDTO } from "../dto/PieceDTO";
 import { MoveDTO } from "../dto/MoveDTO";
 import { SquaresDTO } from "../dto/SquaresDTO";
@@ -174,10 +175,20 @@ export class Chessboard {
                 if (moves) {
                     for (const move of moves) {
                         if (!this.isCheckedByMoving(player, move)) {
-                            if (!legalMoves[move.fromSquare.name]) {
-                                legalMoves[move.fromSquare.name] = {};
+                            const from: string = move.fromSquare.name;
+                            const to: string = move.toSquare.name;
+
+                            if (!legalMoves[from]) {
+                                legalMoves[from] = {};
                             }
-                            legalMoves[move.fromSquare.name][move.toSquare.name] = move;
+
+                            if (!legalMoves[from]?.[to] || move instanceof Castling) {
+                                legalMoves[from][to] = move;
+                            }
+
+                            if (move instanceof Castling) {
+                                legalMoves[from][move.rookMove.fromSquare.name] = move;
+                            }
                         }
                     }
                 }

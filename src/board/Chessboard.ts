@@ -23,6 +23,51 @@ export class Chessboard {
     static Ranks: string[] = ["1", "2", "3", "4", "5", "6", "7", "8"];
     static Files: string[] = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
+    static WhitesCastlingSquares = {
+        kingside: {
+            king: {
+                from: "e1",
+                to: "g1",
+            },
+            rook: {
+                from: "h1",
+                to: "f1",
+            },
+        },
+        queenside: {
+            king: {
+                from: "e1",
+                to: "c1",
+            },
+            rook: {
+                from: "a1",
+                to: "d1",
+            },
+        },
+    };
+    static BlacksCastlingSquares = {
+        kingside: {
+            king: {
+                from: "e8",
+                to: "g8",
+            },
+            rook: {
+                from: "h8",
+                to: "f8",
+            },
+        },
+        queenside: {
+            king: {
+                from: "e8",
+                to: "c8",
+            },
+            rook: {
+                from: "a8",
+                to: "d8",
+            },
+        },
+    };
+
     ranks: string[];
     files: string[];
     reversedRanks: string[];
@@ -75,6 +120,29 @@ export class Chessboard {
                 }
             }
         }
+    }
+
+    isPathLegal(player: Player, fromSquare: Square, toSquare: Square, direction: Direction): boolean {
+        let square: Square | null = fromSquare;
+
+        while ((square = this.getSquareByDirection(square, direction))) {
+            if (!square.isEmpty()) {
+                return false;
+            }
+
+            if (fromSquare.isOccupiedByPieceName(PieceName.King)) {
+                const move: Move = new Move(fromSquare, square);
+                if (this.isCheckedByMoving(player, move)) {
+                    return false;
+                }
+            }
+
+            if (square === toSquare) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     empty(): void {

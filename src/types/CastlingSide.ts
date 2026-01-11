@@ -1,4 +1,4 @@
 export enum CastlingSide {
-    Kingside,
-    Queenside,
+    Kingside = "kingside",
+    Queenside = "queenside",
 }

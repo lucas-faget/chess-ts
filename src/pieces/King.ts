@@ -13,8 +13,6 @@ import { Chessboard } from "../board/Chessboard";
 
 export class King extends Piece {
     static Directions: Direction[] = Queen.Directions;
-    static KingsideCastlingOffset: number = 3;
-    static QueensideCastlingOffset: number = 4;
 
     getName(): PieceName {
         return PieceName.King;
@@ -51,9 +49,6 @@ export class King extends Piece {
 
         let moves: Move[] = [];
 
-        let toSquare: Square | null = null;
-        let rookSquare: Square | null = null;
-
         const sides: CastlingSide[] = [];
         if (player.castlingRights.kingside) sides.push(CastlingSide.Kingside);
         if (player.castlingRights.queenside) sides.push(CastlingSide.Queenside);
@@ -61,39 +56,30 @@ export class King extends Piece {
         for (const side of sides) {
             const direction: Direction | null =
                 side === CastlingSide.Kingside ? player.kingsideDirection : player.queensideDirection;
-            const offset: number =
-                side === CastlingSide.Kingside ? King.KingsideCastlingOffset : King.QueensideCastlingOffset;
+            const rookDirection: Direction | null =
+                side === CastlingSide.Kingside ? player.queensideDirection : player.kingsideDirection;
 
-            if (!direction) continue;
-
-            rookSquare = chessboard.getSquareByDirection(fromSquare, direction, offset);
-            if (!rookSquare || !rookSquare.isOccupiedByPieceName(PieceName.Rook)) {
+            if (!direction || !rookDirection) {
                 continue;
             }
 
-            if (
-                side === CastlingSide.Queenside &&
-                !chessboard.getSquareByDirection(fromSquare, direction, offset - 1)?.isEmpty()
-            ) {
+            const toSquare: Square | null = chessboard.getSquareByName(player.castlingSquares[side].king.to);
+            const rookSquare: Square | null = chessboard.getSquareByName(player.castlingSquares[side].rook.from);
+            const rookToSquare: Square | null = chessboard.getSquareByName(player.castlingSquares[side].rook.to);
+
+            if (!toSquare || !rookSquare || !rookToSquare) {
                 continue;
             }
 
-            toSquare = chessboard.getSquareByDirection(fromSquare, direction);
-            if (toSquare && toSquare.isEmpty()) {
-                let move: Move = new Move(fromSquare, toSquare);
-                if (!chessboard.isCheckedByMoving(player, move)) {
-                    toSquare = chessboard.getSquareByDirection(toSquare, direction);
-                    if (toSquare && toSquare.isEmpty()) {
-                        move = new Castling(
-                            fromSquare,
-                            toSquare,
-                            new Move(rookSquare, chessboard.getSquareByDirection(fromSquare, direction)!),
-                            side
-                        );
-                        moves.push(move);
-                    }
-                }
+            if (!chessboard.isPathLegal(player, fromSquare, toSquare, direction)) {
+                continue;
             }
+
+            if (!chessboard.isPathLegal(player, rookSquare, rookToSquare, rookDirection)) {
+                continue;
+            }
+
+            moves.push(new Castling(fromSquare, toSquare, new Move(rookSquare, rookToSquare), side));
         }
 
         return moves;

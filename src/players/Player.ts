@@ -4,6 +4,7 @@ import { PieceName } from "../types/PieceName";
 import { MoveType } from "../types/MoveType";
 import { CastlingSide } from "../types/CastlingSide";
 import { CastlingRights } from "../types/CastlingRights";
+import { CastlingSquares } from "../types/CastlingSquares";
 import { Piece } from "../pieces/Piece";
 import { Pawn } from "../pieces/Pawn";
 import { King } from "../pieces/King";
@@ -16,13 +17,14 @@ export class Player {
     name: string;
     color: PlayerColor;
     direction: Direction;
-    pawnCaptureDirections: Direction[];
-    enPassantCaptureDirections: Direction[];
     castlingRights: CastlingRights;
-    kingsideDirection: Direction | null;
-    queensideDirection: Direction | null;
     kingSquare: Square | null = null;
     isChecked: Piece | false = false;
+    pawnCaptureDirections: Direction[];
+    enPassantCaptureDirections: Direction[];
+    kingsideDirection: Direction | null;
+    queensideDirection: Direction | null;
+    castlingSquares: CastlingSquares;
 
     constructor(
         color: PlayerColor,
@@ -33,11 +35,13 @@ export class Player {
         this.color = color;
         this.name = name;
         this.direction = direction;
+        this.castlingRights = castlingRights;
         this.pawnCaptureDirections = Pawn.getCaptureDirections(direction);
         this.enPassantCaptureDirections = Pawn.getEnPassantCaptureDirections(direction);
-        this.castlingRights = castlingRights;
         this.kingsideDirection = King.getCastlingDirection(CastlingSide.Kingside, direction);
         this.queensideDirection = King.getCastlingDirection(CastlingSide.Queenside, direction);
+        this.castlingSquares =
+            this.color === PlayerColor.Black ? Chessboard.BlacksCastlingSquares : Chessboard.WhitesCastlingSquares;
     }
 
     updateCastlingRights(move: Move, chessboard: Chessboard): void {
@@ -53,24 +57,12 @@ export class Player {
 
         if (move.toSquare.isOccupiedByPieceName(PieceName.Rook)) {
             if (this.castlingRights.kingside && this.kingsideDirection) {
-                if (
-                    chessboard.getSquareByDirection(
-                        this.kingSquare,
-                        this.kingsideDirection,
-                        King.KingsideCastlingOffset,
-                    ) === move.fromSquare
-                ) {
+                if (this.castlingSquares.kingside.rook.from === move.fromSquare.name) {
                     this.castlingRights.kingside = false;
                 }
             }
             if (this.castlingRights.queenside && this.queensideDirection) {
-                if (
-                    chessboard.getSquareByDirection(
-                        this.kingSquare,
-                        this.queensideDirection,
-                        King.QueensideCastlingOffset,
-                    ) === move.fromSquare
-                ) {
+                if (this.castlingSquares.queenside.rook.from === move.fromSquare.name) {
                     this.castlingRights.queenside = false;
                 }
             }

@@ -1,4 +1,5 @@
 import { Direction } from "../coordinates/Direction";
+import { Directions } from "../coordinates/Directions";
 import { PlayerColor } from "../types/PlayerColor";
 import { PieceName } from "../types/PieceName";
 import { MoveType } from "../types/MoveType";
@@ -22,8 +23,7 @@ export class Player {
     isChecked: Piece | false = false;
     pawnCaptureDirections: Direction[];
     enPassantCaptureDirections: Direction[];
-    kingsideDirection: Direction | null;
-    queensideDirection: Direction | null;
+    castlingDirections: Record<CastlingSide, Direction>;
     castlingSquares: CastlingSquares;
 
     constructor(
@@ -38,13 +38,15 @@ export class Player {
         this.castlingRights = castlingRights;
         this.pawnCaptureDirections = Pawn.getCaptureDirections(direction);
         this.enPassantCaptureDirections = Pawn.getEnPassantCaptureDirections(direction);
-        this.kingsideDirection = King.getCastlingDirection(CastlingSide.Kingside, direction);
-        this.queensideDirection = King.getCastlingDirection(CastlingSide.Queenside, direction);
+        this.castlingDirections = {
+            kingside: King.getCastlingDirection(CastlingSide.Kingside, direction) ?? Directions.Right,
+            queenside: King.getCastlingDirection(CastlingSide.Queenside, direction) ?? Directions.Left,
+        };
         this.castlingSquares =
             this.color === PlayerColor.Black ? Chessboard.BlacksCastlingSquares : Chessboard.WhitesCastlingSquares;
     }
 
-    updateCastlingRights(move: Move, chessboard: Chessboard): void {
+    updateCastlingRights(move: Move): void {
         if (!this.kingSquare || (!this.castlingRights.kingside && !this.castlingRights.queenside)) {
             return;
         }
@@ -56,14 +58,11 @@ export class Player {
         }
 
         if (move.toSquare.isOccupiedByPieceName(PieceName.Rook)) {
-            if (this.castlingRights.kingside && this.kingsideDirection) {
-                if (this.castlingSquares.kingside.rook.from === move.fromSquare.name) {
-                    this.castlingRights.kingside = false;
-                }
-            }
-            if (this.castlingRights.queenside && this.queensideDirection) {
-                if (this.castlingSquares.queenside.rook.from === move.fromSquare.name) {
-                    this.castlingRights.queenside = false;
+            for (const side of [CastlingSide.Kingside, CastlingSide.Queenside]) {
+                if (this.castlingRights[side] && this.castlingDirections[side]) {
+                    if (this.castlingSquares[side].rook.from === move.fromSquare.name) {
+                        this.castlingRights[side] = false;
+                    }
                 }
             }
         }

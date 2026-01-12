@@ -54,14 +54,11 @@ export class King extends Piece {
         if (player.castlingRights.queenside) sides.push(CastlingSide.Queenside);
 
         for (const side of sides) {
-            const direction: Direction | null =
-                side === CastlingSide.Kingside ? player.kingsideDirection : player.queensideDirection;
-            const rookDirection: Direction | null =
-                side === CastlingSide.Kingside ? player.queensideDirection : player.kingsideDirection;
-
-            if (!direction || !rookDirection) {
-                continue;
-            }
+            const direction: Direction = player.castlingDirections[side];
+            const rookDirection: Direction = {
+                dx: -direction.dx,
+                dy: -direction.dy,
+            };
 
             const toSquare: Square | null = chessboard.getSquareByName(player.castlingSquares[side].king.to);
             const rookSquare: Square | null = chessboard.getSquareByName(player.castlingSquares[side].rook.from);

@@ -9,8 +9,8 @@ describe("Player", () => {
         expect(player.direction).toEqual(Directions.Up);
         expect(new Set(player.pawnCaptureDirections)).toEqual(new Set([Directions.UpLeft, Directions.UpRight]));
         expect(new Set(player.enPassantCaptureDirections)).toEqual(new Set([Directions.Left, Directions.Right]));
-        expect(player.kingsideDirection).toEqual(Directions.Right);
-        expect(player.queensideDirection).toEqual(Directions.Left);
+        expect(player.castlingDirections.kingside).toEqual(Directions.Right);
+        expect(player.castlingDirections.queenside).toEqual(Directions.Left);
     });
 
     it("should set correct directions for blacks", () => {
@@ -18,8 +18,8 @@ describe("Player", () => {
         expect(player.direction).toEqual(Directions.Down);
         expect(new Set(player.pawnCaptureDirections)).toEqual(new Set([Directions.DownLeft, Directions.DownRight]));
         expect(new Set(player.enPassantCaptureDirections)).toEqual(new Set([Directions.Left, Directions.Right]));
-        expect(player.kingsideDirection).toEqual(Directions.Right);
-        expect(player.queensideDirection).toEqual(Directions.Left);
+        expect(player.castlingDirections.kingside).toEqual(Directions.Right);
+        expect(player.castlingDirections.queenside).toEqual(Directions.Left);
     });
 
     it("should set correct directions for silvers", () => {

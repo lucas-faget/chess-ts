@@ -16,19 +16,31 @@ export class FischerRandomChess extends Chess {
         ["r", "k", "r", "n", "n"],
     ];
 
-    constructor(id: number | undefined = undefined) {
+    constructor(fenString: string | undefined = undefined) {
+        if (!fenString) {
+            const row: string = FischerRandomChess.getRandomRow();
+            fenString = FischerRandomChess.buildFenFromRow(row);
+        }
+
+        super(fenString);
+    }
+
+    static fromId(id: number): FischerRandomChess {
+        const row: string = FischerRandomChess.getRowById(id);
+        const fenString: string = FischerRandomChess.buildFenFromRow(row);
+
+        return new FischerRandomChess(fenString);
+    }
+
+    static buildFenFromRow(row: string): string {
         const fen: string[] = Fen.InitialFenString.split(" ");
         const rows: string[] = fen[0].split("/");
-
-        const row: string = id !== undefined ? FischerRandomChess.getRowById(id) : FischerRandomChess.getRandomRow();
 
         rows[0] = row;
         rows[rows.length - 1] = row.toUpperCase();
 
         fen[0] = rows.join("/");
-        const fenString: string = fen.join(" ");
-
-        super(fenString);
+        return fen.join(" ");
     }
 
     static getRandomRow(): string {

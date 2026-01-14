@@ -32,6 +32,7 @@ export class Chess {
 
         this.chessboard = new Chessboard(fen.position);
         this.setKingSquares();
+        this.setCastlingSquares();
 
         this.activePlayerIndex = this.players.findIndex((p) => (p.color as string) === fen.activePlayer) ?? 0;
         const activePlayer: Player = this.getActivePlayer();
@@ -96,6 +97,8 @@ export class Chess {
         }
     }
 
+    setCastlingSquares(): void {}
+
     setLegalMoves(): void {
         const player: Player = this.getActivePlayer();
         if (player.kingSquare) {
@@ -129,7 +132,7 @@ export class Chess {
         this.getActivePlayer().isChecked = false;
         move.carryOutMove();
         this.getActivePlayer().kingSquare = this.chessboard.findKingSquare(this.getActivePlayer().color);
-        this.getActivePlayer().updateCastlingRights(move, this.chessboard);
+        this.getActivePlayer().updateCastlingRights(move);
         this.setNextPlayer();
         if (this.activePlayerIndex === 0) this.fullmoveNumber++;
         this.halfmoveClock = isPawnMove || move instanceof Capture ? 0 : this.halfmoveClock + 1;

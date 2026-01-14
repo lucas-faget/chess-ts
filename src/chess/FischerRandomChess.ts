@@ -1,4 +1,8 @@
+import { Direction } from "../coordinates/Direction";
+import { PieceName } from "../types/PieceName";
+import { CastlingSide } from "../types/CastlingSide";
 import { Fen } from "../fen/Fen";
+import { Square } from "../board/Square";
 import { Chessboard } from "../board/Chessboard";
 import { Chess } from "./Chess";
 
@@ -93,5 +97,27 @@ export class FischerRandomChess extends Chess {
         }
 
         return row.join("");
+    }
+
+    setCastlingSquares(): void {
+        for (const player of this.players) {
+            if (!player.kingSquare) return;
+
+            sideLoop: for (const side of [CastlingSide.Kingside, CastlingSide.Queenside]) {
+                player.castlingSquares[side].king.from = player.kingSquare.name;
+
+                const direction: Direction = player.castlingDirections[side];
+
+                let square: Square | null = player.kingSquare;
+                while ((square = this.chessboard.getSquareByDirection(square, direction))) {
+                    if (square.isOccupiedByPieceName(PieceName.Rook) && square.isOccupiedByAlly(player.color)) {
+                        player.castlingSquares[side].rook.from = square.name;
+                        continue sideLoop;
+                    }
+                }
+
+                player.castlingRights[side] = false;
+            }
+        }
     }
 }

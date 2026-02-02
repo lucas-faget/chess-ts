@@ -4,6 +4,7 @@ import { CastlingSide } from "../src/types/CastlingSide";
 import { MoveType } from "../src/types/MoveType";
 import { Chess960Rows } from "./data/Chess960Rows";
 import { generateKRConfigs } from "./helpers/fischerRandom";
+import { Chessboard } from "../src/board/Chessboard";
 import { FischerRandomChess } from "../src/chess/FischerRandomChess";
 
 describe("Fischer Random Chess", () => {
@@ -28,23 +29,56 @@ describe("Fischer Random Chess", () => {
                             it("should returns correct rook square", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.players[0].castlingSquares[side].rook.from).toBe(rookSquare);
-                                expect(chess.chessboard.getSquareByName(rookSquare)?.piece?.getName()).toBe(
-                                    PieceName.Rook,
-                                );
+                                expect(chess.chessboard.getSquareByName(rookSquare)?.piece?.serialize()).toMatchObject({
+                                    color: "w",
+                                    name: "r",
+                                });
                             });
 
                             it("should returns correct king square", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.players[0].castlingSquares[side].king.from).toBe(kingSquare);
-                                expect(chess.chessboard.getSquareByName(kingSquare)?.piece?.getName()).toBe(
-                                    PieceName.King,
-                                );
+                                expect(chess.chessboard.getSquareByName(kingSquare)?.piece?.serialize()).toMatchObject({
+                                    color: "w",
+                                    name: "k",
+                                });
                             });
 
                             it("should allow castling", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.isLegalMove(kingSquare, rookSquare)).toBe(true);
                                 expect(chess.getLegalMove(kingSquare, rookSquare)?.getType()).toBe(MoveType.Castling);
+                            });
+
+                            it("should castle", () => {
+                                const chess: FischerRandomChess = new FischerRandomChess(fen);
+                                chess.tryMove(kingSquare, rookSquare);
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.WhitesCastlingSquares[side].king.to)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "w", name: "k" });
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.WhitesCastlingSquares[side].rook.to)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "w", name: "r" });
+                            });
+
+                            it("should cancel castling", () => {
+                                const chess: FischerRandomChess = new FischerRandomChess(fen);
+                                chess.tryMove(kingSquare, rookSquare);
+                                chess.cancelLastMove();
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.WhitesCastlingSquares[side].king.from)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "w", name: "k" });
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.WhitesCastlingSquares[side].rook.from)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "w", name: "r" });
                             });
                         });
                         describe("blacks", () => {
@@ -55,23 +89,56 @@ describe("Fischer Random Chess", () => {
                             it("should returns correct rook square", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.players[1].castlingSquares[side].rook.from).toBe(rookSquare);
-                                expect(chess.chessboard.getSquareByName(rookSquare)?.piece?.getName()).toBe(
-                                    PieceName.Rook,
-                                );
+                                expect(chess.chessboard.getSquareByName(rookSquare)?.piece?.serialize()).toMatchObject({
+                                    color: "b",
+                                    name: "r",
+                                });
                             });
 
                             it("should returns correct king square", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.players[1].castlingSquares[side].king.from).toBe(kingSquare);
-                                expect(chess.chessboard.getSquareByName(kingSquare)?.piece?.getName()).toBe(
-                                    PieceName.King,
-                                );
+                                expect(chess.chessboard.getSquareByName(kingSquare)?.piece?.serialize()).toMatchObject({
+                                    color: "b",
+                                    name: "k",
+                                });
                             });
 
                             it("should allow castling", () => {
                                 const chess: FischerRandomChess = new FischerRandomChess(fen);
                                 expect(chess.isLegalMove(kingSquare, rookSquare)).toBe(true);
                                 expect(chess.getLegalMove(kingSquare, rookSquare)?.getType()).toBe(MoveType.Castling);
+                            });
+
+                            it("should castle", () => {
+                                const chess: FischerRandomChess = new FischerRandomChess(fen);
+                                chess.tryMove(kingSquare, rookSquare);
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.BlacksCastlingSquares[side].king.to)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "b", name: "k" });
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.BlacksCastlingSquares[side].rook.to)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "b", name: "r" });
+                            });
+
+                            it("should cancel castling", () => {
+                                const chess: FischerRandomChess = new FischerRandomChess(fen);
+                                chess.tryMove(kingSquare, rookSquare);
+                                chess.cancelLastMove();
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.BlacksCastlingSquares[side].king.from)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "b", name: "k" });
+                                expect(
+                                    chess.chessboard
+                                        .getSquareByName(Chessboard.BlacksCastlingSquares[side].rook.from)
+                                        ?.piece?.serialize(),
+                                ).toMatchObject({ color: "b", name: "r" });
                             });
                         });
                     });
